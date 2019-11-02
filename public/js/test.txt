@@ -1,0 +1,5 @@
+2- performance comparison (using minimax + my custom eval and minimax+ordinary eval) -> move generation of minimax is fixed
+Depth 4:
+My engine results:
+
+Game 1: loss
