@@ -20,14 +20,14 @@ var minimaxRoot =function(depth, game, isMaximisingPlayer) {
     }
     return bestMoveFound;
 };
-var eval1 = 0;
+var eval = 0;
 var custom = 0;
 var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
     positionCount++;
     if (depth === 0) {
-        eval1 = -evaluateBoard(game.board());
+        eval = -evaluateBoard(game.board());
         // custom = evaluate(game);
-        return eval1;
+        return eval;
     }
 
     var newGameMoves = game.ugly_moves();
@@ -63,7 +63,6 @@ var evaluateBoard = function (board) {
     var totalEvaluation = 0;
     for (var i = 0; i < 8; i++) {
         for (var j = 0; j < 8; j++) {
-            
             totalEvaluation = totalEvaluation + getPieceValue(board[i][j], i ,j);
         }
     }
@@ -202,6 +201,8 @@ var makeBestMove = function () {
     board.position(game.fen());
     renderMoveHistory(game.history());
 
+    chceckPos(game.fen());
+
     //evaluate(game);
     //alert('minimax: '+eval1);
     //alert('custom: '+custom);
@@ -311,51 +312,64 @@ var cfg = {
 };
 board = ChessBoard('board', cfg);
 
+//indexing chess pieces for zobrist hash
+// var indexing = function(piece){
+//     if (piece != null && piece.type =='p' && piece.color == 'w')
+//         return 0;
+//     if (piece != null && piece.type =='n' && piece.color == 'w')
+//         return 1;
+//     if (piece != null && piece.type =='b' && piece.color == 'w')
+//         return 2;
+//     if (piece != null && piece.type =='r' && piece.color == 'w')
+//         return 3;
+//     if (piece != null && piece.type =='q' && piece.color == 'w')
+//         return 4;
+//     if (piece != null && piece.type =='k' && piece.color == 'w')
+//         return 5;
+//     if (piece != null && piece.type =='p' && piece.color == 'b')
+//         return 6;
+//     if (piece != null && piece.type =='n' && piece.color == 'b')
+//         return 7;
+//     if (piece != null && piece.type =='b' && piece.color == 'b')
+//         return 8;
+//     if (piece != null && piece.type =='r' && piece.color == 'b')
+//         return 9;
+//     if (piece != null && piece.type =='q' && piece.color == 'b')
+//         return 10;
+//     if (piece != null && piece.type =='k' && piece.color == 'b')
+//         return 11;
+//     else
+//         return -1;
+// }
 
-var indexing = function(piece){
-    if (piece != null && piece.type =='p' && piece.color == 'w')
-        return 0;
-    if (piece != null && piece.type =='n' && piece.color == 'w')
-        return 1;
-    if (piece != null && piece.type =='b' && piece.color == 'w')
-        return 2;
-    if (piece != null && piece.type =='r' && piece.color == 'w')
-        return 3;
-    if (piece != null && piece.type =='q' && piece.color == 'w')
-        return 4;
-    if (piece != null && piece.type =='k' && piece.color == 'w')
-        return 5;
-    if (piece != null && piece.type =='p' && piece.color == 'b')
-        return 6;
-    if (piece != null && piece.type =='n' && piece.color == 'b')
-        return 7;
-    if (piece != null && piece.type =='b' && piece.color == 'b')
-        return 8;
-    if (piece != null && piece.type =='r' && piece.color == 'b')
-        return 9;
-    if (piece != null && piece.type =='q' && piece.color == 'b')
-        return 10;
-    if (piece != null && piece.type =='k' && piece.color == 'b')
-        return 11;
-    else
-        return -1;
-}
+//Zobrist hash
+// var zobrist = new Uint32Array(13 * 2 * 64 * 2) // pieces * colors * fields * 64/32
+// for (var i=0; i<zobrist.length; i++)
+//     zobrist[i] = Math.random() * 4294967296;
 
-var zobrist = new Uint32Array(13 * 2 * 64 * 2) // pieces * colors * fields * 64/32
-for (var i=0; i<zobrist.length; i++)
-    zobrist[i] = Math.random() * 4294967296;
+// var table = new Uint32Array(3 * 100000);
 
-var table = new Uint32Array(3 * tablesize);
+// function hash(hi, lo, piece, color, field) {
+//     hi ^= zobrist[piece * 128 + color * 64 + field];
+//     lo ^= zobrist[piece * 128 + color * 64 + field + 1];
 
-function hash(hi, lo, piece, color, field) {
-    hi ^= zobrist[piece * 128 + color * 64 + field];
-    lo ^= zobrist[piece * 128 + color * 64 + field + 1];
+//     var i = lo % 100000;
+//     if (table[i] == hi && table[i+1] == lo) {
+//         // collision
+//     } else {
+//         table[i] = hi; table[i+1] = lo;
+//         alert(table[i+2]);
+//     }
+// }
 
-    var i = lo % tablesize;
-    if (table[i] == hi && table[i+1] == lo) {
-        // collision
-    } else {
-        table[i] = hi; table[i+1] = lo;
-        // do what you want with table[i+2]
-    }
+var chceckPos = function(fen){
+    $.ajax({
+        url: "http://127.0.0.1:8000/rand",
+        type: 'get',
+        dataType: 'json',
+        data: {"_token": "{{ csrf_token() }}", fen: fen},
+        success: function (data) {
+            console.log(data);
+        }
+    });
 }

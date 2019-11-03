@@ -3,3 +3,8 @@ Depth 4:
 My engine results:
 
 Game 1: loss
+
+3-11-2019
+win:
+draw: 1
+loss: 

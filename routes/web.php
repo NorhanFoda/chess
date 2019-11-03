@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/rand', 'RandomController@index');
+Route::get('/rand', 'RandomController@index')->name('rand');
 // Route::get('/random', function () {
     // for($i = 1; $i <= 768; $i++){
     //     App\Random::create([
